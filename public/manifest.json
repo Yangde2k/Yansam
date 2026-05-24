@@ -1,0 +1,22 @@
+{
+  "id": "/",
+  "name": "YANSAM",
+  "short_name": "YANSAM",
+  "description": "A private couple sanctuary for memories, moods, letters, and future plans.",
+  "theme_color": "#f6d7de",
+  "background_color": "#fff8f1",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "start_url": "/",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["lifestyle", "social"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
