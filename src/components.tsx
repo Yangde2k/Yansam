@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import type { ButtonHTMLAttributes, ComponentType, InputHTMLAttributes, PropsWithChildren, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -53,17 +53,35 @@ export function GhostButton({ className, children, ...props }: PropsWithChildren
   );
 }
 
-export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
-  return <input className={cn('w-full rounded-2xl border border-white/60 bg-white/65 px-4 py-3 text-sm text-wine outline-none ring-0 placeholder:text-cocoa/70 focus:border-rose focus:bg-white/85', className)} {...props} />;
-}
+export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(function Input({ className, ...props }, ref) {
+  return (
+    <input
+      ref={ref}
+      className={cn('w-full rounded-2xl border border-white/60 bg-white/65 px-4 py-3 text-sm text-wine outline-none ring-0 placeholder:text-cocoa/70 focus:border-rose focus:bg-white/85', className)}
+      {...props}
+    />
+  );
+});
 
-export function Textarea({ className, ...props }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return <textarea className={cn('min-h-[120px] w-full rounded-2xl border border-white/60 bg-white/65 px-4 py-3 text-sm text-wine outline-none placeholder:text-cocoa/70 focus:border-rose focus:bg-white/85', className)} {...props} />;
-}
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<HTMLTextAreaElement>>(function Textarea({ className, ...props }, ref) {
+  return (
+    <textarea
+      ref={ref}
+      className={cn('min-h-[120px] w-full rounded-2xl border border-white/60 bg-white/65 px-4 py-3 text-sm text-wine outline-none placeholder:text-cocoa/70 focus:border-rose focus:bg-white/85', className)}
+      {...props}
+    />
+  );
+});
 
-export function Select({ className, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select className={cn('w-full rounded-2xl border border-white/60 bg-white/65 px-4 py-3 text-sm text-wine outline-none focus:border-rose focus:bg-white/85', className)} {...props} />;
-}
+export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement>>(function Select({ className, ...props }, ref) {
+  return (
+    <select
+      ref={ref}
+      className={cn('w-full rounded-2xl border border-white/60 bg-white/65 px-4 py-3 text-sm text-wine outline-none focus:border-rose focus:bg-white/85', className)}
+      {...props}
+    />
+  );
+});
 
 export function GlassCard({ className, children }: PropsWithChildren<{ className?: string }>) {
   return <div className={cn('rounded-[28px] border border-white/50 bg-white/45 p-5 shadow-glow backdrop-blur-xl', className)}>{children}</div>;
