@@ -79,3 +79,38 @@ export function quoteOfTheDay(quotes: string[]) {
 export function sanitizeFilename(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9.]+/g, '-');
 }
+
+export function getSafeExternalUrl(value?: string | null) {
+  if (!value) return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+
+  try {
+    const normalized = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+    return new URL(normalized).toString();
+  } catch (_error) {
+    return null;
+  }
+}
+
+export function isDirectAudioUrl(value?: string | null) {
+  const safeUrl = getSafeExternalUrl(value);
+  if (!safeUrl) return false;
+
+  const pathname = new URL(safeUrl).pathname.toLowerCase();
+  return ['.mp3', '.wav', '.ogg', '.m4a', '.aac', '.flac', '.webm'].some((ext) => pathname.endsWith(ext));
+}
+
+export function getExternalAudioLabel(value?: string | null) {
+  const safeUrl = getSafeExternalUrl(value);
+  if (!safeUrl) return 'Open song';
+
+  const hostname = new URL(safeUrl).hostname.toLowerCase();
+
+  if (hostname.includes('spotify')) return 'Open in Spotify';
+  if (hostname.includes('youtube') || hostname.includes('youtu.be')) return 'Open in YouTube';
+  if (hostname.includes('music.apple')) return 'Open in Apple Music';
+  if (hostname.includes('soundcloud')) return 'Open in SoundCloud';
+
+  return 'Open song';
+}

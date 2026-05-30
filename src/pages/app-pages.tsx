@@ -380,7 +380,7 @@ export function MemoriesPage() {
             </div>
             <div>
               <label className="mb-2 block text-sm text-cocoa/75">Song URL (optional)</label>
-              <Input placeholder="https://…" {...form.register('music_url')} />
+              <Input placeholder="Direct .mp3 link, Spotify, YouTube…" {...form.register('music_url')} />\n              <p className="mt-2 text-xs text-cocoa/65">Direct audio files play inside YANSAM. Spotify, YouTube, and similar links will open externally as a fallback.</p>
             </div>
           </div>
           <div>

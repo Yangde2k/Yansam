@@ -22,7 +22,7 @@ import {
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import type { Album, CoupleSpace, Letter, Memory, Milestone, MoodKind, Photo, Profile } from './types';
 import { MOOD_OPTIONS } from './types';
-import { cn, formatDate, formatRelativeDate, getInitials, getMoodMeta, isUnlocked } from './lib/utils';
+import { cn, formatDate, formatRelativeDate, getExternalAudioLabel, getInitials, getMoodMeta, getSafeExternalUrl, isDirectAudioUrl, isUnlocked } from './lib/utils';
 import { useUIStore } from './store/ui';
 
 export function Button({ className, children, ...props }: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>) {
@@ -336,6 +336,8 @@ export function AmbientAudioPlayer({ src }: { src?: string | null }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.65);
+  const safeUrl = getSafeExternalUrl(src);
+  const directAudio = isDirectAudioUrl(src);
 
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = volume;
@@ -343,7 +345,7 @@ export function AmbientAudioPlayer({ src }: { src?: string | null }) {
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !directAudio) return;
 
     let interval: number | undefined;
     if (playing) {
@@ -372,24 +374,43 @@ export function AmbientAudioPlayer({ src }: { src?: string | null }) {
     return () => {
       if (interval) window.clearInterval(interval);
     };
-  }, [playing, volume]);
+  }, [directAudio, playing, volume]);
 
-  if (!src) return null;
+  if (!safeUrl) return null;
+
+  if (!directAudio) {
+    return (
+      <GlassCard className="mt-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/70 text-wine">
+            <Music4 className="h-5 w-5" />
+          </div>
+          <div className="flex-1">
+            <p className="font-medium text-wine">Memory soundtrack</p>
+            <p className="text-xs text-cocoa/70">This link opens externally because it is not a direct audio file.</p>
+          </div>
+          <GhostButton onClick={() => window.open(safeUrl, '_blank', 'noopener,noreferrer')}>
+            {getExternalAudioLabel(safeUrl)}
+          </GhostButton>
+        </div>
+      </GlassCard>
+    );
+  }
 
   return (
-    <GlassCard>
+    <GlassCard className="mt-4">
       <div className="flex items-center gap-3">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/70 text-wine">
           <Music4 className="h-5 w-5" />
         </div>
         <div className="flex-1">
           <p className="font-medium text-wine">Memory soundtrack</p>
-          <p className="text-xs text-cocoa/70">Soft fade in, soft fade out.</p>
+          <p className="text-xs text-cocoa/70">Direct audio links will play inside YANSAM with a soft fade.</p>
         </div>
         <GhostButton onClick={() => setPlaying((value) => !value)}>{playing ? 'Pause' : 'Play'}</GhostButton>
       </div>
       <input className="mt-4 w-full accent-wine" type="range" min={0} max={1} step={0.05} value={volume} onChange={(event) => setVolume(Number(event.target.value))} />
-      <audio ref={audioRef} src={src} preload="none" loop />
+      <audio ref={audioRef} src={safeUrl} preload="none" loop />
     </GlassCard>
   );
 }
