@@ -163,6 +163,7 @@ export async function listMemories(coupleId: string) {
     (data ?? []).map(async (memory) => ({
       ...(memory as Memory),
       photo_src: await signedUrl(memory.photo_url),
+      music_src: await signedUrl(memory.music_url),
     })),
   );
 
@@ -182,10 +183,13 @@ export async function saveMemory(
     pinned?: boolean;
     archived?: boolean;
     photoFile?: File | null;
+    musicFile?: File | null;
     existingPhotoPath?: string | null;
+    existingMusicPath?: string | null;
   },
 ) {
   let photoPath = payload.existingPhotoPath ?? null;
+  let musicPath = payload.existingMusicPath ?? payload.music_url ?? null;
 
   if (payload.photoFile) {
     photoPath = await uploadFile(payload.photoFile, `${coupleId}/memories`);
@@ -194,12 +198,19 @@ export async function saveMemory(
     }
   }
 
+  if (payload.musicFile) {
+    musicPath = await uploadFile(payload.musicFile, `${coupleId}/memories/audio`);
+    if (payload.existingMusicPath && payload.existingMusicPath != musicPath) {
+      await removeFiles([payload.existingMusicPath]);
+    }
+  }
+
   const record = {
     couple_id: coupleId,
     title: payload.title,
     body: payload.body,
     mood: payload.mood ?? null,
-    music_url: payload.music_url ?? null,
+    music_url: musicPath ?? null,
     memory_date: payload.memory_date ?? null,
     favorite: payload.favorite ?? false,
     pinned: payload.pinned ?? false,

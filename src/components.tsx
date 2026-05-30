@@ -5,6 +5,7 @@ import {
   CalendarDays,
   Camera,
   Check,
+  FileAudio2,
   ChevronRight,
   Heart,
   Home,
@@ -793,4 +794,4 @@ export function PageTabs({ value, onChange, items }: { value: string; onChange: 
   );
 }
 
-export { CalendarDays, Camera, Heart, Home, Image, LetterText, Lock, Plus, Sparkles, Target };
+export { CalendarDays, Camera, FileAudio2, Heart, Home, Image, LetterText, Lock, Plus, Sparkles, Target };

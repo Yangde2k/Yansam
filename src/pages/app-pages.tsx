@@ -12,6 +12,7 @@ import {
   GhostButton,
   GlassCard,
   HiddenReveal,
+  FileAudio2,
   Image,
   Input,
   LoveLetterCard,
@@ -219,6 +220,7 @@ export function MemoriesPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Memory | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedMusicFile, setSelectedMusicFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Memory | null>(null);
   const form = useForm<MemoryForm>({ defaultValues: { mood: 'grateful', memory_date: todayIsoDate() } });
@@ -243,13 +245,15 @@ export function MemoriesPage() {
         title: values.title,
         body: values.body,
         mood: values.mood,
-        music_url: values.music_url || null,
+        music_url: selectedMusicFile ? null : values.music_url || null,
         memory_date: values.memory_date || null,
         favorite: editing?.favorite ?? false,
         pinned: editing?.pinned ?? false,
         archived: editing?.archived ?? false,
         photoFile: selectedFile,
+        musicFile: selectedMusicFile,
         existingPhotoPath: editing?.photo_url ?? null,
+        existingMusicPath: editing?.music_url ?? null,
       });
     },
     onSuccess: async () => {
@@ -258,6 +262,7 @@ export function MemoriesPage() {
       setOpen(false);
       setEditing(null);
       setSelectedFile(null);
+      setSelectedMusicFile(null);
       form.reset({ title: '', body: '', mood: 'grateful', music_url: '', memory_date: todayIsoDate() });
     },
     onError: (error) => addToast({ title: 'Could not save memory', description: error instanceof Error ? error.message : 'Please retry.', tone: 'error' }),
@@ -287,6 +292,7 @@ export function MemoriesPage() {
         pinned: patch.pinned ?? memory.pinned,
         archived: patch.archived ?? memory.archived,
         existingPhotoPath: memory.photo_url,
+        existingMusicPath: memory.music_url,
       });
     },
     onMutate: async ({ memory, patch }) => {
@@ -314,6 +320,7 @@ export function MemoriesPage() {
   const startEdit = (memory: Memory) => {
     setEditing(memory);
     setSelectedFile(null);
+    setSelectedMusicFile(null);
     form.reset({
       title: memory.title,
       body: memory.body,
@@ -382,6 +389,26 @@ export function MemoriesPage() {
               <label className="mb-2 block text-sm text-cocoa/75">Song URL (optional)</label>
               <Input placeholder="Direct .mp3 link, Spotify, YouTube…" {...form.register('music_url')} />\n              <p className="mt-2 text-xs text-cocoa/65">Direct audio files play inside YANSAM. Spotify, YouTube, and similar links will open externally as a fallback.</p>
             </div>
+          </div>
+          <div>
+            <label className="mb-2 block text-sm text-cocoa/75">Audio file from your device (optional)</label>
+            <MobileFilePicker
+              label={selectedMusicFile ? `Selected: ${selectedMusicFile.name}` : 'Choose audio from device'}
+              helper={selectedMusicFile ? 'This uploaded audio file will be saved inside your private memory and used instead of the URL above.' : editing?.music_url ? 'Choose an audio file to replace the current soundtrack, or leave empty to keep the existing one.' : 'Pick an audio file from device storage. MP3, WAV, OGG, M4A and similar formats work best.'}
+              accept="audio/*"
+              icon={FileAudio2}
+              onFiles={(files) => setSelectedMusicFile(files[0] ?? null)}
+              loading={saveMutation.isPending}
+            />
+            {selectedMusicFile ? (
+              <button
+                type="button"
+                className="mt-3 text-sm font-medium text-wine underline underline-offset-4"
+                onClick={() => setSelectedMusicFile(null)}
+              >
+                Remove selected audio file
+              </button>
+            ) : null}
           </div>
           <div>
             <label className="mb-2 block text-sm text-cocoa/75">Photo</label>

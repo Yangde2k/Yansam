@@ -315,7 +315,7 @@ export interface Database {
 export type Profile = Database['public']['Tables']['profiles']['Row'];
 export type CoupleSpace = Database['public']['Tables']['couple_spaces']['Row'];
 export type PartnerInvite = Database['public']['Tables']['partner_invites']['Row'];
-export type Memory = Database['public']['Tables']['memories']['Row'] & { photo_src?: string | null };
+export type Memory = Database['public']['Tables']['memories']['Row'] & { photo_src?: string | null; music_src?: string | null };
 export type Album = Database['public']['Tables']['albums']['Row'] & {
   photos?: Photo[];
   cover_src?: string | null;
