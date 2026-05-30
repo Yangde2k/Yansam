@@ -221,18 +221,18 @@ export async function saveMemory(
   if (payload.id) {
     const { data, error } = await supabase.from('memories').update(record).eq('id', payload.id).select('*').single();
     if (error) throw error;
-    return { ...(data as Memory), photo_src: await signedUrl(data.photo_url) };
+    return { ...(data as Memory), photo_src: await signedUrl(data.photo_url), music_src: await signedUrl(data.music_url) };
   }
 
   const { data, error } = await supabase.from('memories').insert(record).select('*').single();
   if (error) throw error;
-  return { ...(data as Memory), photo_src: await signedUrl(data.photo_url) };
+  return { ...(data as Memory), photo_src: await signedUrl(data.photo_url), music_src: await signedUrl(data.music_url) };
 }
 
 export async function deleteMemory(memory: Memory) {
   const { error } = await supabase.from('memories').delete().eq('id', memory.id);
   if (error) throw error;
-  await removeFiles([memory.photo_url]);
+  await removeFiles([memory.photo_url, memory.music_url]);
 }
 
 export async function listAlbums(coupleId: string) {

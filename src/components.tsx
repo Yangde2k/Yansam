@@ -278,19 +278,19 @@ export function MoodPicker({ value, onChange }: { value?: MoodKind; onChange: (v
   );
 }
 
-export function MobileFilePicker({ label = 'Choose photos', helper = 'Uses the native gallery / file picker.', multiple = false, onFiles, previewUrls = [], loading = false }: { label?: string; helper?: string; multiple?: boolean; onFiles: (files: File[]) => void; previewUrls?: string[]; loading?: boolean }) {
+export function MobileFilePicker({ label = 'Choose photos', helper = 'Uses the native gallery / file picker.', multiple = false, accept = 'image/*', icon: Icon = Camera, onFiles, previewUrls = [], loading = false }: { label?: string; helper?: string; multiple?: boolean; accept?: string; icon?: ComponentType<{ className?: string }>; onFiles: (files: File[]) => void; previewUrls?: string[]; loading?: boolean }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   return (
     <div className="space-y-3 rounded-3xl border border-dashed border-white/60 bg-white/40 p-4 backdrop-blur-xl">
       <button type="button" onClick={() => inputRef.current?.click()} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-white/80 px-4 py-3 text-sm font-medium text-wine shadow-soft">
-        {loading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+        {loading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Icon className="h-4 w-4" />}
         {label}
       </button>
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept={accept}
         multiple={multiple}
         className="hidden"
         onChange={(event) => {
@@ -441,7 +441,7 @@ export function MemoryCard({ memory, onEdit, onDelete, onToggleFavorite, onToggl
         </div>
         {memory.photo_src ? <img src={memory.photo_src} alt={memory.title} className="mt-4 h-60 w-full rounded-[24px] object-cover" /> : null}
         <p className="mt-4 text-sm leading-7 text-cocoa/85">{memory.body}</p>
-        {memory.music_url ? <AmbientAudioPlayer src={memory.music_url} /> : null}
+        {memory.music_src || memory.music_url ? <AmbientAudioPlayer src={memory.music_src ?? memory.music_url} /> : null}
         <div className="mt-4 flex gap-2">
           <GhostButton className="flex-1" onClick={() => onEdit?.(memory)}>Edit</GhostButton>
           <GhostButton className="flex-1" onClick={() => onDelete?.(memory)}><Trash2 className="h-4 w-4" /> Delete</GhostButton>
