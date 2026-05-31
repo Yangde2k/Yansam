@@ -79,7 +79,6 @@ export function quoteOfTheDay(quotes: string[]) {
 export function sanitizeFilename(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9.]+/g, '-');
 }
-
 export function getSafeExternalUrl(value?: string | null) {
   if (!value) return null;
   const trimmed = value.trim();
@@ -112,5 +111,5 @@ export function getExternalAudioLabel(value?: string | null) {
   if (hostname.includes('music.apple')) return 'Open in Apple Music';
   if (hostname.includes('soundcloud')) return 'Open in SoundCloud';
 
-  return 'Open song';
+  return isDirectAudioUrl(safeUrl) ? 'Play uploaded audio' : 'Open song';
 }

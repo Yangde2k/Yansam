@@ -328,7 +328,7 @@ export function UploadDropzone({ onFiles, previewUrls = [], loading = false }: {
       }}
       className={cn('rounded-3xl border border-dashed bg-white/35 p-2 transition', dragging ? 'border-rose bg-white/60' : 'border-white/60')}
     >
-      <MobileFilePicker label="Upload from gallery" helper="No forced camera capture. Fast preview, stable upload." multiple onFiles={onFiles} previewUrls={previewUrls} loading={loading} />
+      <MobileFilePicker label="Upload from gallery" helper="No forced camera capture. Fast preview, stable upload." multiple accept="image/*" icon={Camera} onFiles={onFiles} previewUrls={previewUrls} loading={loading} />
     </div>
   );
 }

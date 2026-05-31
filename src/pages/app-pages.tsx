@@ -293,7 +293,6 @@ export function MemoriesPage() {
         archived: patch.archived ?? memory.archived,
         existingPhotoPath: memory.photo_url,
         existingMusicPath: memory.music_url,
-        existingMusicPath: memory.music_url,
       });
     },
     onMutate: async ({ memory, patch }) => {
@@ -314,6 +313,7 @@ export function MemoriesPage() {
   const startCreate = () => {
     setEditing(null);
     setSelectedFile(null);
+    setSelectedMusicFile(null);
     form.reset({ title: '', body: '', mood: 'grateful', music_url: '', memory_date: todayIsoDate() });
     setOpen(true);
   };

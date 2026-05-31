@@ -50,6 +50,23 @@ function singleRpcRow<T>(data: T | T[] | null) {
   return data;
 }
 
+export async function bootstrapCurrentUser() {
+  const { data, error } = await supabase.rpc('bootstrap_current_user');
+  if (error) throw error;
+
+  const payload = (Array.isArray(data) ? data[0] : data) as {
+    profile: Profile | null;
+    couple_space: CoupleSpace | null;
+  } | null;
+
+  if (!payload) throw new Error('Could not bootstrap the current user.');
+
+  return {
+    profile: payload.profile,
+    coupleSpace: payload.couple_space,
+  };
+}
+
 export async function ensureProfile(user: User) {
   const { data: existing, error } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
   if (error) throw error;
@@ -200,7 +217,7 @@ export async function saveMemory(
 
   if (payload.musicFile) {
     musicPath = await uploadFile(payload.musicFile, `${coupleId}/memories/audio`);
-    if (payload.existingMusicPath && payload.existingMusicPath != musicPath) {
+    if (payload.existingMusicPath && payload.existingMusicPath !== musicPath) {
       await removeFiles([payload.existingMusicPath]);
     }
   }
